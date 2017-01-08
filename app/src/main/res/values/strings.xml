@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SimpleWeatherApp</string>
+    <string name="enter_location">Enter location</string>
+    <string name="check_weather">Check weather</string>
+    <string name="pressure">Pressure</string>
+    <string name="condition">Condition</string>
+    <string name="wind_speed">Wind speed</string>
+    <string name="humidity">Humidity</string>
+    <string name="temperature">Temperature</string>
+</resources>
