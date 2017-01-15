@@ -14,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/enter_location"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+        android:singleLine="true"/>
 
     <Button
         android:id="@+id/checkWeatherBtn"

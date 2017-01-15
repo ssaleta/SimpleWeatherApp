@@ -1,25 +1,29 @@
 package com.example.sebastian.simpleweatherapp;
 
-import android.os.AsyncTask;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.Toast;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.example.sebastian.simpleweatherapp.Model.Weather;
-
 import org.json.JSONException;
-
 import java.text.DecimalFormat;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static String BASE_URL = "http://api.openweathermap.org/data/2.5/weather?q=";
+    private static String OPEN_WEATHER_KEY = "&appid=4486e0f55bd59ade152282ecd02c8b30";
+    private static String IMG_URL = "http://openweathermap.org/img/w/";
 
     @BindView(R.id.weatherImg)
     ImageView weatherImg;
@@ -40,46 +44,71 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.checkWeatherBtn)
     Button checkWeatherBtn;
 
+    private HTTPRequestHandler httpRequestHandler;
+    private Weather weather;
+    private String city;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        String city = "Wroclaw,PL";
-        JSONWeatherTask task = new JSONWeatherTask();
-        task.execute(new String[]{city});
+        city = "Czestochowa,PL";
+        httpRequestHandler = HTTPRequestHandler.getInstance();
+        httpRequestHandler.init(getApplicationContext());
+        httpRequestHandler.sendGetRequest(BASE_URL + city + OPEN_WEATHER_KEY, getResponseListener(), getErrorListener());
+        setLocation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (keyEvent != null && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(setLocation.getApplicationWindowToken(), inputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                return false;
+            }
+        });
         checkWeatherBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String city = setLocation.getText().toString();
-                Log.d("button", city);
-                JSONWeatherTask task = new JSONWeatherTask();
-                task.execute(new String[]{city});
+                if(setLocation.getText().toString() != null) {
+                    city = setLocation.getText().toString();
+                }
+                httpRequestHandler.sendGetRequest(BASE_URL + city + OPEN_WEATHER_KEY, getResponseListener(), getErrorListener());
             }
         });
 
     }
 
-    private class JSONWeatherTask extends AsyncTask<String, Void, Weather> {
-
-        @Override
-        protected Weather doInBackground(String... params) {
-            Weather weather = new Weather();
-            String data = new HTTPWeatherClient().getWeatherData(params[0]);
-
-
-            try {
-                weather = JSONParser.getWeather(data);
-               /* weather.iconData = new HTTPWeatherClient().getImage(weather.currentCondition.getIcon());*/
-            } catch (JSONException e) {
-                e.printStackTrace();
+    private Response.Listener getResponseListener() {
+        return new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                showJSON(response);
             }
-            return weather;
-        }
+        };
+    }
 
-        @Override
-        protected void onPostExecute(Weather weather) {
-            super.onPostExecute(weather);
+    private Response.ErrorListener getErrorListener() {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_SHORT);
+            }
+        };
+    }
+
+    public void showJSON(String json) {
+        JSONParser jsonParser = new JSONParser();
+        try {
+            weather = jsonParser.getWeather(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        initializeView(weather);
+
+    }
+
+        public void initializeView(Weather weather){
            /* if (weather.iconData != null && weather.iconData.length > 0) {
                 Bitmap image = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
                 weatherImg.setImageBitmap(image);*/
@@ -91,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
             temperature.setText(oneDecimalPlace.format(weather.temperature.getTemp() - 272.15) + " °C");
             humidity.setText(Float.toString(weather.currentCondition.getHumidity()) + " %");
             pressure.setText(Float.toString(weather.currentCondition.getPressure()) + " hPa");
+
         }
     }
 
-}
+
