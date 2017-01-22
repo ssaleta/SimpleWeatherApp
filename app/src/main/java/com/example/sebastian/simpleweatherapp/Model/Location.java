@@ -1,16 +1,18 @@
 package com.example.sebastian.simpleweatherapp.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Sebastian on 2017-01-07.
  */
 public class Location {
 
-    private float longitude;
-    private float latitude;
-    private long sunset;
-    private long sunrise;
-    private String country;
+    @SerializedName("sys")
+    public Country country = new Country();
+
+    @SerializedName("name")
     private String city;
+
 
     public String getCity() {
         return city;
@@ -20,45 +22,19 @@ public class Location {
         this.city = city;
     }
 
-    public String getCountry() {
-        return country;
+
+
+    public class Country{
+
+        @SerializedName("country")
+        private String country;
+
+        public String getCountry() {
+            return country;
+        }
+
+        public void setCountry(String country) {
+            this.country = country;
+        }
     }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public long getSunrise() {
-        return sunrise;
-    }
-
-    public void setSunrise(long sunrise) {
-        this.sunrise = sunrise;
-    }
-
-    public long getSunset() {
-        return sunset;
-    }
-
-    public void setSunset(long sunset) {
-        this.sunset = sunset;
-    }
-
-    public float getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
-    public float getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
-    }
-
-
 }

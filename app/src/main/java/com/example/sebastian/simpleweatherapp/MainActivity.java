@@ -3,6 +3,7 @@ package com.example.sebastian.simpleweatherapp;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -11,11 +12,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.sebastian.simpleweatherapp.Model.Location;
 import com.example.sebastian.simpleweatherapp.Model.Weather;
+import com.google.gson.Gson;
+
 import org.json.JSONException;
+
 import java.text.DecimalFormat;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -60,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         setLocation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (keyEvent != null && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
+                if (keyEvent != null && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.hideSoftInputFromWindow(setLocation.getApplicationWindowToken(), inputMethodManager.HIDE_NOT_ALWAYS);
                 }
@@ -70,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         checkWeatherBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(setLocation.getText().toString() != null) {
+                if (setLocation.getText().toString() != null) {
                     city = setLocation.getText().toString();
                 }
                 httpRequestHandler.sendGetRequest(BASE_URL + city + OPEN_WEATHER_KEY, getResponseListener(), getErrorListener());
@@ -98,30 +105,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showJSON(String json) {
-        JSONParser jsonParser = new JSONParser();
-        try {
-            weather = jsonParser.getWeather(json);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        initializeView(weather);
-
+        Gson gson = new Gson();
+        Weather weather = gson.fromJson(json, Weather.class);
+        Location location = gson.fromJson(json, Location.class);
+        initializeView(weather, location);
     }
 
-        public void initializeView(Weather weather){
-           /* if (weather.iconData != null && weather.iconData.length > 0) {
-                Bitmap image = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
-                weatherImg.setImageBitmap(image);*/
-            cityname.setText(weather.location.getCity() + "," + weather.location.getCountry());
-            condition.setText(weather.currentCondition.getCondition());
-            windSpeed.setText(Float.toString(weather.wind.getSpeed()) + " m/s");
-            DecimalFormat oneDecimalPlace = new DecimalFormat("##.#");
-            //Kelvin to Celsjus
-            temperature.setText(oneDecimalPlace.format(weather.temperature.getTemp() - 272.15) + " °C");
-            humidity.setText(Float.toString(weather.currentCondition.getHumidity()) + " %");
-            pressure.setText(Float.toString(weather.currentCondition.getPressure()) + " hPa");
+    public void initializeView(Weather weather, Location location) {
 
-        }
+        DecimalFormat oneDecimalPlace = new DecimalFormat("##.#");
+        cityname.setText(location.getCity() + "," + location.country.getCountry());
+        condition.setText(weather.weatherDescription.get(0).getDescription());
+        windSpeed.setText(Float.toString(weather.wind.getSpeed()) + " m/s");
+        humidity.setText(Float.toString(weather.currentCondition.getHumidity()) + " %");
+        pressure.setText(Float.toString(weather.currentCondition.getPressure()) + " hPa");
+        temperature.setText(oneDecimalPlace.format(weather.currentCondition.getTemperature() - 272.15) + " °C");
+
     }
+}
 
 

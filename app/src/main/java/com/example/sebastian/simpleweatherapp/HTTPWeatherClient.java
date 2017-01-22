@@ -1,13 +1,6 @@
 package com.example.sebastian.simpleweatherapp;
 
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-
-import com.example.sebastian.simpleweatherapp.Model.Weather;
-
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

@@ -1,167 +1,105 @@
 package com.example.sebastian.simpleweatherapp.Model;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
 /**
  * Created by Sebastian on 2017-01-07.
  */
 public class Weather {
 
-    public Location location;
+    @SerializedName("main")
     public CurrentCondition currentCondition = new CurrentCondition();
-    public Temperature temperature = new Temperature();
+    @SerializedName("wind")
     public Wind wind = new Wind();
-    public Rain rain = new Rain();
-    public Snow snow = new Snow()	;
-    public Clouds clouds = new Clouds();
+    @SerializedName("weather")
+    public List<WeatherDescription> weatherDescription;
 
     public byte[] iconData;
 
-    public  class CurrentCondition {
-        private int weatherId;
-        private String condition;
-        private String descr;
-        private String icon;
+    public class CurrentCondition {
 
-
+        @SerializedName("pressure")
         private float pressure;
+        @SerializedName("humidity")
         private float humidity;
+        @SerializedName("temp")
+        private float temperature;
 
-        public int getWeatherId() {
-            return weatherId;
+        public float getTemperature() {
+            return temperature;
         }
-        public void setWeatherId(int weatherId) {
-            this.weatherId = weatherId;
+
+        public void setTemperature(float temperature) {
+            this.temperature = temperature;
         }
-        public String getCondition() {
-            return condition;
-        }
-        public void setCondition(String condition) {
-            this.condition = condition;
-        }
-        public String getDescr() {
-            return descr;
-        }
-        public void setDescr(String descr) {
-            this.descr = descr;
-        }
-        public String getIcon() {
-            return icon;
-        }
-        public void setIcon(String icon) {
-            this.icon = icon;
-        }
+
         public float getPressure() {
             return pressure;
         }
+
         public void setPressure(float pressure) {
             this.pressure = pressure;
         }
+
         public float getHumidity() {
             return humidity;
         }
+
         public void setHumidity(float humidity) {
             this.humidity = humidity;
         }
 
+    }
+
+    public class WeatherDescription {
+
+        private List<WeatherDescription> weatherDescription;
+        @SerializedName("description")
+        private String description;
+        @SerializedName("icon")
+        private String icon;
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getIcon() {
+            return icon;
+        }
+
+        public void setIcon(String icon) {
+            this.icon = icon;
+        }
+
+        public List<WeatherDescription> getWeatherDescritpion() {
+            return weatherDescription;
+        }
+
+        public void setWeatherDescription(List<WeatherDescription> weatherDescription) {
+            this.weatherDescription = weatherDescription;
+        }
 
     }
 
-    public  class Temperature {
-        private float temp;
-        private float minTemp;
-        private float maxTemp;
-
-        public float getTemp() {
-            return temp;
-        }
-        public void setTemp(float temp) {
-            this.temp = temp;
-        }
-        public float getMinTemp() {
-            return minTemp;
-        }
-        public void setMinTemp(float minTemp) {
-            this.minTemp = minTemp;
-        }
-        public float getMaxTemp() {
-            return maxTemp;
-        }
-        public void setMaxTemp(float maxTemp) {
-            this.maxTemp = maxTemp;
-        }
-
-    }
-
-    public  class Wind {
+    public class Wind {
+        @SerializedName("speed")
         private float speed;
-        private float deg;
+
         public float getSpeed() {
             return speed;
         }
+
         public void setSpeed(float speed) {
             this.speed = speed;
         }
-        public float getDeg() {
-            return deg;
-        }
-        public void setDeg(float deg) {
-            this.deg = deg;
-        }
-
 
     }
 
-    public  class Rain {
-        private String time;
-        private float ammount;
-        public String getTime() {
-            return time;
-        }
-        public void setTime(String time) {
-            this.time = time;
-        }
-        public float getAmmount() {
-            return ammount;
-        }
-        public void setAmmount(float ammount) {
-            this.ammount = ammount;
-        }
-
-
-
-    }
-
-    public  class Snow {
-        private String time;
-        private float ammount;
-
-        public String getTime() {
-            return time;
-        }
-        public void setTime(String time) {
-            this.time = time;
-        }
-        public float getAmmount() {
-            return ammount;
-        }
-        public void setAmmount(float ammount) {
-            this.ammount = ammount;
-        }
-
-
-    }
-
-    public  class Clouds {
-        private int perc;
-
-        public int getPerc() {
-            return perc;
-        }
-
-        public void setPerc(int perc) {
-            this.perc = perc;
-        }
-
-
-    }
 
 }
