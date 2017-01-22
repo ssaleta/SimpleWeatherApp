@@ -3,7 +3,6 @@ package com.example.sebastian.simpleweatherapp;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -12,15 +11,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.sebastian.simpleweatherapp.Model.Location;
 import com.example.sebastian.simpleweatherapp.Model.Weather;
 import com.google.gson.Gson;
-
-import org.json.JSONException;
-
 import java.text.DecimalFormat;
 
 import butterknife.BindView;
