@@ -3,7 +3,6 @@ package com.example.sebastian.simpleweatherapp;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.weatherImg)
     ImageView weatherImg;
     @BindView(R.id.city_name)
-    TextView cityname;
+    TextView cityName;
     @BindView(R.id.condition)
     TextView condition;
     @BindView(R.id.pressure)
@@ -52,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private HTTPRequestHandler httpRequestHandler;
     private Weather weather;
     private String city;
+    private Location location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +59,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        city = "Wroclaw,PL";
-        httpRequestHandler = HTTPRequestHandler.getInstance();
-        httpRequestHandler.init(getApplicationContext());
-        httpRequestHandler.sendGetRequest(BASE_URL + city + OPEN_WEATHER_KEY, getResponseListener(), getErrorListener());
+        createHTTPRequestHandler();
         setLocation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -79,10 +76,9 @@ public class MainActivity extends AppCompatActivity {
                     hideKeyboard();
                     city = setLocation.getText().toString();
                 }
-                httpRequestHandler.sendGetRequest(BASE_URL + city + OPEN_WEATHER_KEY, getResponseListener(), getErrorListener());
+                checkWeather(city);
             }
         });
-
     }
 
     private Response.Listener getResponseListener() {
@@ -103,10 +99,21 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
+    public void createHTTPRequestHandler(){
+        httpRequestHandler = HTTPRequestHandler.getInstance();
+        httpRequestHandler.init(getApplicationContext());
+        city = "Wroclaw,PL";
+        checkWeather(city);
+    }
+
+    public void checkWeather(String city){
+        httpRequestHandler.sendGetRequest(BASE_URL + city + OPEN_WEATHER_KEY, getResponseListener(), getErrorListener());
+    }
+
     public void showJSON(String json) {
         Gson gson = new Gson();
-        Weather weather = gson.fromJson(json, Weather.class);
-        Location location = gson.fromJson(json, Location.class);
+        weather = gson.fromJson(json, Weather.class);
+        location = gson.fromJson(json, Location.class);
         initializeView(weather, location);
 
     }
@@ -115,13 +122,25 @@ public class MainActivity extends AppCompatActivity {
         inputMethodManager.hideSoftInputFromWindow(setLocation.getApplicationWindowToken(), inputMethodManager.HIDE_NOT_ALWAYS);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString("city",city);
+    }
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        city = savedInstanceState.getString("city");
+        checkWeather(city);
+    }
+
     public void initializeView(Weather weather, Location location) {
 
         Picasso.with(this)
                 .load(IMG_URL + weather.weatherDescription.get(0).getIcon() + ".png")
                 .into(weatherImg);
         DecimalFormat oneDecimalPlace = new DecimalFormat("##.#");
-        cityname.setText(location.getCity() + "," + location.country.getCountry());
+        cityName.setText(location.getCity() + "," + location.country.getCountry());
         condition.setText(weather.weatherDescription.get(0).getDescription());
         windSpeed.setText(Float.toString(weather.wind.getSpeed()) + " m/s");
         humidity.setText(Float.toString(weather.currentCondition.getHumidity()) + " %");
