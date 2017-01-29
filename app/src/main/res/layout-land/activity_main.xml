@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillViewport="true">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -90,7 +96,8 @@
         android:id="@+id/wind_speed_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/pressure"
+        android:layout_below="@id/city_name"
+        android:layout_toRightOf="@id/condition"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
@@ -100,7 +107,7 @@
         android:id="@+id/wind_speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/pressure"
+        android:layout_below="@id/city_name"
         android:layout_toRightOf="@+id/wind_speed_txt"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingLeft="16dp"
@@ -112,6 +119,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/wind_speed"
+        android:layout_toRightOf="@id/pressure"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
@@ -132,7 +140,8 @@
         android:id="@+id/temperature_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/humidity"
+        android:layout_below="@id/city_name"
+        android:layout_toRightOf="@id/wind_speed"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
@@ -142,12 +151,12 @@
         android:id="@+id/temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/humidity"
+        android:layout_below="@id/city_name"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
         android:layout_toRightOf="@+id/temperature_txt"
-        android:layout_marginLeft="5dp"/>
+        android:layout_marginLeft="5dp"/>-->
 
 </RelativeLayout>
-
+</ScrollView>

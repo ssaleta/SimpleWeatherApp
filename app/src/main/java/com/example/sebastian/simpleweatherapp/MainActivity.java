@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     EditText setLocation;
     @BindView(R.id.checkWeatherBtn)
     Button checkWeatherBtn;
-
+    private  InputMethodManager inputMethodManager;
     private HTTPRequestHandler httpRequestHandler;
     private Weather weather;
     private String city;
@@ -58,17 +58,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        city = "Czestochowa,PL";
+        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        city = "Wroclaw,PL";
         httpRequestHandler = HTTPRequestHandler.getInstance();
         httpRequestHandler.init(getApplicationContext());
         httpRequestHandler.sendGetRequest(BASE_URL + city + OPEN_WEATHER_KEY, getResponseListener(), getErrorListener());
-
         setLocation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (keyEvent != null && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(setLocation.getApplicationWindowToken(), inputMethodManager.HIDE_NOT_ALWAYS);
+                    hideKeyboard();
                 }
                 return false;
             }
@@ -77,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (setLocation.getText().toString() != null) {
+                    hideKeyboard();
                     city = setLocation.getText().toString();
                 }
                 httpRequestHandler.sendGetRequest(BASE_URL + city + OPEN_WEATHER_KEY, getResponseListener(), getErrorListener());
@@ -109,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
         Location location = gson.fromJson(json, Location.class);
         initializeView(weather, location);
 
+    }
+
+    private void hideKeyboard(){
+        inputMethodManager.hideSoftInputFromWindow(setLocation.getApplicationWindowToken(), inputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     public void initializeView(Weather weather, Location location) {
